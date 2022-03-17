@@ -23,11 +23,9 @@
     "url": "https://github.com/MonstroDev/expo-image-picker-multiple/issues"
   },
   "homepage": "https://github.com/MonstroDev/expo-image-picker-multiple#readme",
-  "dependencies": {
-    "expo-screen-orientation": "^3.0.0"
-  },
   "peerDependencies": {
-    "react-native": "*"
+    "react-native": "*",
+    "expo-screen-orientation": "*"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.3",
