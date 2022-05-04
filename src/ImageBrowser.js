@@ -6,13 +6,13 @@ import {
   Dimensions,
   ActivityIndicator,
 } from 'react-native'
-import * as ScreenOrientation from 'expo-screen-orientation';
 import * as ImagePicker from 'expo-image-picker'
 import * as MediaLibrary from 'expo-media-library'
 
 import ImageTile from './ImageTile'
 
 const {width} = Dimensions.get('window');
+const NUM_COLUMNS = 4;
 
 export default class ImageBrowser extends React.Component {
   static defaultProps = {
@@ -26,7 +26,6 @@ export default class ImageBrowser extends React.Component {
   state = {
     hasCameraPermission: null,
     hasCameraRollPermission: null,
-    numColumns: null,
     photos: [],
     selected: [],
     isEmpty: false,
@@ -36,15 +35,7 @@ export default class ImageBrowser extends React.Component {
 
   async componentDidMount() {
     await this.getPermissionsAsync();
-    ScreenOrientation.addOrientationChangeListener(this.onOrientationChange);
-    const orientation = await ScreenOrientation.getOrientationAsync();
-    const numColumns = this.getNumColumns(orientation);
-    this.setState({numColumns});
     this.getPhotos();
-  }
-
-  componentWillUnmount() {
-    ScreenOrientation.removeOrientationChangeListeners()
   }
 
   getPermissionsAsync = async () => {
@@ -54,19 +45,6 @@ export default class ImageBrowser extends React.Component {
       hasCameraPermission: camera === 'granted',
       hasCameraRollPermission: cameraRoll === 'granted'
     });
-  }
-
-  onOrientationChange = ({orientationInfo}) => {
-    ScreenOrientation.removeOrientationChangeListeners();
-    ScreenOrientation.addOrientationChangeListener(this.onOrientationChange);
-    const numColumns = this.getNumColumns(orientationInfo.orientation);
-    this.setState({numColumns});
-  }
-
-  getNumColumns = orientation => {
-    const {PORTRAIT_UP, PORTRAIT_DOWN} = ScreenOrientation.Orientation;
-    const isPortrait = orientation === PORTRAIT_UP || orientation === PORTRAIT_DOWN;
-    return isPortrait ? 4 : 7;
   }
 
   selectImage = (index) => {
@@ -152,8 +130,8 @@ export default class ImageBrowser extends React.Component {
     return (
       <FlatList
         data={this.state.photos}
-        numColumns={this.state.numColumns}
-        key={this.state.numColumns}
+        numColumns={NUM_COLUMNS}
+        key={NUM_COLUMNS}
         renderItem={this.renderImageTile}
         keyExtractor={(_, index) => index}
         onEndReached={() => this.getPhotos()}
