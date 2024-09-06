@@ -40,12 +40,16 @@ export default class ImageBrowser extends React.Component {
   }
 
   getPermissionsAsync = async () => {
-    const { status: camera } =
-      await ImagePicker.requestCameraPermissionsAsync();
-    const { status: cameraRoll } =
-      await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const { status: camera } = await ImagePicker.requestCameraPermissionsAsync(
+      false,
+      []
+    );
+    const { status: cameraRoll } = await MediaLibrary.requestPermissionsAsync(
+      false,
+      []
+    );
     const { status: requestPermissions } =
-      await MediaLibrary.requestPermissionsAsync();
+      await MediaLibrary.requestPermissionsAsync(false, []);
 
     this.setState({
       hasCameraPermission: camera === "granted",
