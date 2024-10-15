@@ -75,6 +75,8 @@ export default class ImageBrowser extends React.Component {
   };
 
   getPhotos = async () => {
+    if (this.state.loading) return;
+
     try {
       this.setState({ loading: true });
 
@@ -99,8 +101,6 @@ export default class ImageBrowser extends React.Component {
   };
 
   processPhotos = async (data) => {
-    if (this.state.loading) return;
-
     if (this.state.hasMediaLibraryPermission) {
       if (data.totalCount) {
         if (this.state.after === data.endCursor) return;
