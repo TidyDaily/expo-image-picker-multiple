@@ -32,6 +32,7 @@ export default class ImageBrowser extends React.Component {
     after: null,
     hasNextPage: true,
     hasMediaLibraryPermission: null,
+    loading: false,
   };
 
   async componentDidMount() {
@@ -73,16 +74,29 @@ export default class ImageBrowser extends React.Component {
     });
   };
 
-  getPhotos = () => {
-    const params = {
-      first: this.props.loadCount,
-      mediaType: this.props.mediaType,
-      sortBy: [MediaLibrary.SortBy.creationTime],
-    };
-    if (this.state.after) params.after = this.state.after;
-    if (!this.state.hasNextPage) return;
-    if (this.state.hasMediaLibraryPermission) {
-      MediaLibrary.getAssetsAsync(params).then(this.processPhotos);
+  getPhotos = async () => {
+    if (this.state.loading) return;
+
+    try {
+      this.setState({ loading: true });
+
+      const params = {
+        first: this.props.loadCount,
+        mediaType: this.props.mediaType,
+        sortBy: [MediaLibrary.SortBy.creationTime],
+      };
+
+      if (this.state.after) params.after = this.state.after;
+      if (!this.state.hasNextPage) return;
+
+      if (this.state.hasMediaLibraryPermission) {
+        const data = await MediaLibrary.getAssetsAsync(params);
+        await this.processPhotos(data);
+      }
+    } catch (error) {
+      console.log('error', error);
+    } finally {
+      this.setState({ loading: false });
     }
   };
 
